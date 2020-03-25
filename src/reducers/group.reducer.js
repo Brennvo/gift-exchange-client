@@ -10,7 +10,7 @@ export default (state, action) => {
         name: action.data.groupName,
         date: action.data.voteEndDt,
         participants: action.data.userPolls,
-        invitations: action.data.accessTokens.map(
+        invitations: action.data.invitations.map(
           invitiation => invitiation.email
         ),
         selectedParticipant: null

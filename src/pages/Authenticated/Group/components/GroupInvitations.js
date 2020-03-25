@@ -21,10 +21,10 @@ const GroupInvitations = () => {
     setIsSending(true);
 
     try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_URL}/group/${group.id}/invite`,
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/group/${group.id}/invitation`,
         {
-          email
+          emails: [email]
         }
       );
       dispatch({ type: "NEW_INVITATION", email });
@@ -43,10 +43,10 @@ const GroupInvitations = () => {
 
     // TODO: trigger modal to confirm cancelation
     try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_URL}/group/${group.id}/revokeInvitation`,
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/group/${group.id}/invitation`,
         {
-          email
+          data: { emails: [email] }
         }
       );
     } catch (e) {
