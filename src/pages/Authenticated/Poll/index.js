@@ -25,7 +25,7 @@ const Participant = () => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/group/${groupId}/poll/${pollId}`)
+      .get(`${process.env.REACT_APP_API_URL}/poll/${pollId}`)
       .then(({ data }) => {
         dispatch({ type: "SET_POLL", data });
       });
@@ -36,7 +36,7 @@ const Participant = () => {
     const { title, description, link } = poll.newSuggestion;
     try {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/group/${groupId}/poll/${pollId}`,
+        `${process.env.REACT_APP_API_URL}/poll/${pollId}/suggestion`,
         {
           title,
           description,
@@ -75,7 +75,7 @@ const Participant = () => {
       //await mockError(1000);
 
       await axios.patch(
-        `${process.env.REACT_APP_API_URL}/group/${groupId}/poll/${pollId}`,
+        `${process.env.REACT_APP_API_URL}/poll/${pollId}/suggestion`,
         {
           id,
           upvote: true

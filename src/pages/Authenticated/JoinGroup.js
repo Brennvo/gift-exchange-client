@@ -16,8 +16,8 @@ const JoinGroup = () => {
 
   useEffect(() => {
     axios
-      .patch(
-        `${process.env.REACT_APP_API_URL}/group/${params.groupId}/join/${params.accessToken}`
+      .post(
+        `${process.env.REACT_APP_API_URL}/group/${params.groupId}/poll/${params.accessToken}`
       )
       .then(({ data }) => {
         dispatch({
