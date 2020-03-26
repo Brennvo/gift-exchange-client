@@ -46,7 +46,7 @@ const Home = () => {
       .catch(err => {
         dispatch("ERROR");
       });
-  }, [newGroupId]);
+  }, []);
 
   if (isLoading) return <LoadingSpinner />;
 

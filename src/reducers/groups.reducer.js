@@ -16,11 +16,13 @@ export default (state, action) => {
       };
     }
     case "ADD_GROUP": {
+      const groupType = action.isUserGenerated
+        ? "managedGroups"
+        : "participantGroups";
+
       return {
         ...state,
-        [action.isUserGenerated
-          ? "managedGroups"
-          : "participantGroups"]: action.group
+        [groupType]: [...state[groupType], action.group]
       };
     }
     default: {
