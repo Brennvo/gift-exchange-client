@@ -1,32 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import axios from "axios";
 import { useHistory } from "react-router";
 import { useUserGroupsDispatch } from "../../context/UserGroups.context";
 import TextInput from "../../components/TextInput";
-import { Grid, TextField, Button } from "@material-ui/core";
+import { Grid, TextField, Button, IconButton } from "@material-ui/core";
+import HighlightOffRoundedIcon from "@material-ui/icons/HighlightOffRounded";
+
+const emailReducer = (emails, action) => {
+  switch (action.type) {
+    case "NEW_EMAIL": {
+      return [...emails, ""];
+    }
+    case "CHANGE_EMAIL": {
+      return emails.map((email, i) =>
+        action.indexToChange === i ? action.value : email
+      );
+    }
+    case "DELETE_EMAIL": {
+      return emails.filter((email, i) => action.indexToDelete !== i);
+    }
+    default:
+      return [...emails];
+  }
+};
 
 const CreateGroup = () => {
   const history = useHistory();
   const dispatch = useUserGroupsDispatch();
   const [isSending, setIsSending] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [group, setGroup] = useState({});
+  const [name, setName] = useState("");
+  const [date, setDate] = useState("");
+  const [emails, emailDispatch] = useReducer(emailReducer, []);
 
-  const onChange = e => {
+  const onEmailChange = (indexToChange, e) => {
     const { target } = e;
-    setGroup(prevGroup => ({
-      ...prevGroup,
-      [target.name]: target.value
-    }));
+    emailDispatch({
+      type: "CHANGE_EMAIL",
+      indexToChange,
+      value: target.value
+    });
   };
+
+  const deleteEmail = indexToDelete =>
+    emailDispatch({
+      type: "DELETE_EMAIL",
+      indexToDelete
+    });
+
+  const newEmail = () => emailDispatch({ type: "NEW_EMAIL" });
 
   const handleSubmit = e => {
     e.preventDefault();
     setIsSending(true);
     axios
       .post(`${process.env.REACT_APP_API_URL}/group`, {
-        groupName: group.name,
-        voteEndDt: group.date
+        groupName: name,
+        voteEndDt: date
       })
       .then(({ data: group }) => {
         dispatch({
@@ -62,8 +92,8 @@ const CreateGroup = () => {
         <TextInput
           label="Group name"
           name="name"
-          onChange={onChange}
-          value={group.name || ""}
+          onChange={e => setName(e.target.value)}
+          value={name}
         />
       </Grid>
 
@@ -72,12 +102,40 @@ const CreateGroup = () => {
           label="Last day to vote"
           type="date"
           name="date"
-          onChange={onChange}
-          value={group.date || ""}
+          onChange={e => setDate(e.target.value)}
+          value={date}
           InputLabelProps={{
             shrink: true
           }}
         />
+      </Grid>
+
+      {emails.length > 0 &&
+        emails.map((email, i) => (
+          <Grid item key={i}>
+            <Grid container alignItems="flex-end">
+              <Grid item>
+                <TextInput
+                  label="Email"
+                  type="email"
+                  value={email}
+                  onChange={e => onEmailChange(i, e)}
+                />
+              </Grid>
+
+              <Grid item>
+                <IconButton onClick={() => deleteEmail(i)}>
+                  <HighlightOffRoundedIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
+          </Grid>
+        ))}
+
+      <Grid item>
+        <Button variant="contained" onClick={newEmail}>
+          Add Participant
+        </Button>
       </Grid>
 
       <Grid item>
