@@ -56,7 +56,8 @@ const CreateGroup = () => {
     axios
       .post(`${process.env.REACT_APP_API_URL}/group`, {
         groupName: name,
-        voteEndDt: date
+        voteEndDt: date,
+        emails
       })
       .then(({ data: group }) => {
         dispatch({

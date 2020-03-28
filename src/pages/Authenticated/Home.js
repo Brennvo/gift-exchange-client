@@ -22,12 +22,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 const Home = () => {
   const { user } = useAuth();
   const history = useHistory();
-  const {
-    managedGroups,
-    participantGroups,
-    isLoading,
-    newGroupId
-  } = useUserGroups();
+  const { managedGroups, participantGroups, isLoading } = useUserGroups();
   const dispatch = useUserGroupsDispatch();
   const [view, setView] = useState(
     participantGroups.length === 0 ? "Managed" : "Participant"
@@ -37,6 +32,7 @@ const Home = () => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/group`)
       .then(res => {
+        console.log("all groups: ", res.data);
         dispatch({
           type: "SET_GROUPS",
           managedGroups: res.data.filter(group => group.ownerId === user.id),
@@ -96,7 +92,7 @@ const Home = () => {
                   <Typography variant="body2" component="span">
                     Polls close -
                   </Typography>{" "}
-                  {moment(group.voteEndDt).format("M/DD/YY")}
+                  {moment.utc(group.voteEndDt).format("M/DD/YY")}
                 </>
               }
             />
